@@ -1,0 +1,40 @@
+Modelo 2 | imagen 224x224 | lote 32 | prueba: False
+Found 5694 validated image filenames.
+Found 1897 validated image filenames.
+Epoch 1/20
+178/178 - 454s - 3s/step - loss: 223.9347 - mae: 10.6859 - val_loss: 865.3867 - val_mae: 24.5829
+Epoch 2/20
+178/178 - 425s - 2s/step - loss: 76.0931 - mae: 6.5694 - val_loss: 643.2697 - val_mae: 20.0703
+Epoch 3/20
+178/178 - 431s - 2s/step - loss: 53.4222 - mae: 5.5460 - val_loss: 301.0479 - val_mae: 12.9217
+Epoch 4/20
+178/178 - 437s - 2s/step - loss: 37.8368 - mae: 4.7025 - val_loss: 175.4611 - val_mae: 9.7750
+Epoch 5/20
+178/178 - 426s - 2s/step - loss: 31.9424 - mae: 4.2681 - val_loss: 140.1494 - val_mae: 8.9031
+Epoch 6/20
+178/178 - 469s - 3s/step - loss: 24.2343 - mae: 3.7426 - val_loss: 82.7659 - val_mae: 6.7096
+Epoch 7/20
+178/178 - 469s - 3s/step - loss: 21.3669 - mae: 3.5055 - val_loss: 102.2753 - val_mae: 7.5801
+Epoch 8/20
+178/178 - 426s - 2s/step - loss: 17.9428 - mae: 3.2147 - val_loss: 78.2261 - val_mae: 6.4996
+Epoch 9/20
+178/178 - 431s - 2s/step - loss: 16.3537 - mae: 3.1035 - val_loss: 83.3720 - val_mae: 6.7714
+Epoch 10/20
+178/178 - 423s - 2s/step - loss: 15.2702 - mae: 2.9990 - val_loss: 94.0829 - val_mae: 7.1857
+Epoch 11/20
+178/178 - 431s - 2s/step - loss: 13.3050 - mae: 2.8001 - val_loss: 78.0828 - val_mae: 6.3933
+Epoch 12/20
+178/178 - 428s - 2s/step - loss: 14.2882 - mae: 2.8714 - val_loss: 77.0343 - val_mae: 6.5360
+Epoch 13/20
+178/178 - 434s - 2s/step - loss: 13.2167 - mae: 2.7884 - val_loss: 79.7712 - val_mae: 6.5765
+Epoch 14/20
+178/178 - 437s - 2s/step - loss: 12.5396 - mae: 2.6939 - val_loss: 71.8584 - val_mae: 6.3037
+Epoch 15/20
+178/178 - 428s - 2s/step - loss: 10.9114 - mae: 2.5214 - val_loss: 86.4176 - val_mae: 6.8074
+Epoch 16/20
+178/178 - 429s - 2s/step - loss: 12.0532 - mae: 2.6262 - val_loss: 90.5532 - val_mae: 7.0195
+Epoch 17/20
+178/178 - 428s - 2s/step - loss: 12.1677 - mae: 2.6645 - val_loss: 79.4245 - val_mae: 6.5235
+Tiempo de entrenamiento: 123.4 min
+MAE de validación del modelo 2: 6.3037 (n = 1,897)
+Tiempo total: 124.0 min

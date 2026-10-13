@@ -1,0 +1,14 @@
+Modelo 1 | imagen 224x224 | lote 32 | prueba: False
+Found 5694 validated image filenames.
+Found 1897 validated image filenames.
+Epoch 1/5
+178/178 - 123s - 689ms/step - loss: 578.1471 - mae: 18.5361 - val_loss: 303.7182 - val_mae: 13.0803
+Epoch 2/5
+178/178 - 115s - 646ms/step - loss: 300.0117 - mae: 13.2009 - val_loss: 286.2285 - val_mae: 13.1694
+Epoch 3/5
+178/178 - 115s - 646ms/step - loss: 296.6467 - mae: 13.3031 - val_loss: 285.9202 - val_mae: 13.2366
+Epoch 4/5
+178/178 - 116s - 649ms/step - loss: 296.5015 - mae: 13.3142 - val_loss: 285.8429 - val_mae: 13.1969
+Tiempo de entrenamiento: 7.8 min
+MAE de validación del modelo 1: 13.0803 (n = 1,897)
+Tiempo total: 8.3 min

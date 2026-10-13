@@ -1,0 +1,11 @@
+data/
+models/
+entrega/
+contexto/
+bitacora.md
+resultados/predicciones_validacion.csv
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+resultados/predicciones_modelo_*.csv
+.claude/
