@@ -6,11 +6,25 @@ Modelo de visión artificial que estima la edad de una persona a partir de la fo
 
 📊 **Case study:** [he1109-ci3l0.github.io/good-seed-verificacion-edad](https://he1109-ci3l0.github.io/good-seed-verificacion-edad/)
 
+## Pregunta de negocio
+
+¿Puede una foto del rostro, tomada por la cámara de la caja, estimar la edad con un error medio de 8 años o menos, y cómo debe usarse esa estimación para que la cadena no venda alcohol a menores sin frenar la operación?
+
 ## Resultado
 
 El modelo final (ResNet50 con ajuste fino) **cumple la meta (MAE ≤ 8)** con un **error absoluto medio de 6.30 años** en validación (IC 95%: 6.05 a 6.55), 52% menos que predecir siempre la mediana. Por su sesgo en adolescentes, se recomienda como **apoyo para pedir identificación**, no como filtro autónomo.
 
-## Lógica de negocio
+### Comparación de modelos
+
+| # | Modelo | MAE de validación | Desviación de las estimaciones | ¿Cumple MAE ≤ 8? |
+|---|---|---|---|---|
+| 0 | Constante (mediana de entrenamiento) | 13.05 | 0.00 | No |
+| 1 | ResNet50 congelada + cabeza entrenable | 13.08 | 1.06 | No |
+| 2 | **ResNet50 con ajuste fino** | **6.30** | 14.45 | **Sí** |
+
+![Comparación de modelos](figures/02_comparacion_modelos.png)
+
+## Lo que gana la empresa
 
 **El costo de no cumplir es alto.** En la Ciudad de México, permitir el acceso o la venta de alcohol a menores se sanciona con multas de 300 a 700 Unidades de Cuenta (33,942 a 79,198 pesos con el valor 2025 de 113.14) y la clausura del establecimiento ([Expansión, 2024](https://politica.expansion.mx/voces/2024/06/28/columnainvitada-diversion-segura-y-responsabilidad-empresarial)); en caso de clausura, el artículo 69 añade de 1,000 a 3,000 Unidades de Cuenta, es decir, **113,140 a 339,420 pesos** ([Posta, 2025](https://www.posta.com.mx/cdmx/operativo-nocturno-deja-38-chelerias-fuera-de-servicio-conoce-cuanto-debes-pagar-si-cierran-tu-local/vl2050638)). En 2025 se habían clausurado 565 establecimientos en operativos que atienden denuncias que incluyen la venta de alcohol a menores ([Expansión, 2025](https://politica.expansion.mx/cdmx/2025/05/09/locales-suspendidos-cdmx-operativos-venta-ilegal-alcohol)).
 
@@ -27,16 +41,6 @@ El modelo final (ResNet50 con ajuste fino) **cumple la meta (MAE ≤ 8)** con un
 
 **Umbral recomendado y su compensación.** El modelo pide identificación si la edad estimada es menor que un umbral T. La regla buscaba el T más bajo, entre 18 y 30 años, con ≤ 1% de menores no detectados; **ningún umbral la cumple**. Con T = 30, pasaría el 5.7% de los menores (21 de 366) y se pediría identificación al 46.6% de los adultos. Por eso la ruta recomendada es un piloto del escenario A mientras el modelo se mejora hasta un error compatible con el colchón de 3 años que exige el regulador alemán KJM ([Yoti, 2025](https://www.yoti.com/blog/age-estimation-approved-kjm-highest-age-assurance-level-18-adult-content/)).
 
-## Comparación de modelos
-
-| # | Modelo | MAE de validación | Desviación de las estimaciones | ¿Cumple MAE ≤ 8? |
-|---|---|---|---|---|
-| 0 | Constante (mediana de entrenamiento) | 13.05 | 0.00 | No |
-| 1 | ResNet50 congelada + cabeza entrenable | 13.08 | 1.06 | No |
-| 2 | **ResNet50 con ajuste fino** | **6.30** | 14.45 | **Sí** |
-
-![Comparación de modelos](figures/02_comparacion_modelos.png)
-
 ## Hallazgos
 
 1. **El ajuste fino es indispensable.** La red congelada con pesos de ImageNet (MAE 13.08) no supera al modelo constante: sus estimaciones casi no varían (desviación de 1.06 años). ImageNet no es un conjunto de rostros.
@@ -51,7 +55,16 @@ El modelo final (ResNet50 con ajuste fino) **cumple la meta (MAE ≤ 8)** con un
 |---|---|
 | ![Error por grupo](figures/04_error_por_grupo.png) | ![Política de umbral](figures/06_compensacion_umbral.png) |
 
-## Estructura
+## Cómo está hecho
+
+1. **Datos:** APPA-REAL, 7,591 fotografías con edad real; ninguna se publica.
+2. **Mezcla y división:** filas mezcladas con `RANDOM_STATE = 12345`; 75% entrenamiento (5,694) y 25% validación (1,897, con 366 menores).
+3. **Preprocesamiento:** 224 × 224 píxeles, `rescale=1/255` y reflejo horizontal solo en entrenamiento.
+4. **Modelos:** constante (mediana), ResNet50 congelada y ResNet50 con ajuste fino, con cabeza `GlobalAveragePooling2D` + `Dense(1, relu)`.
+5. **Entrenamiento:** pérdida MSE, métrica MAE, Adam (0.001 congelada; 0.0001 ajuste fino), parada temprana con paciencia 3 sobre `val_mae`; en CPU local (Apple M5, 16 GB).
+6. **Evaluación:** MAE global y por grupo, sesgo, curva de umbral de 18 a 30 años e intervalos de confianza del 95% por *bootstrap* (1,000 remuestreos).
+
+### Estructura
 
 ```
 good-seed-verificacion-edad/
@@ -75,16 +88,7 @@ good-seed-verificacion-edad/
 └── README.md
 ```
 
-## Metodología
-
-1. **Datos:** APPA-REAL, 7,591 fotografías con edad real; ninguna se publica.
-2. **Mezcla y división:** filas mezcladas con `RANDOM_STATE = 12345`; 75% entrenamiento (5,694) y 25% validación (1,897, con 366 menores).
-3. **Preprocesamiento:** 224 × 224 píxeles, `rescale=1/255` y reflejo horizontal solo en entrenamiento.
-4. **Modelos:** constante (mediana), ResNet50 congelada y ResNet50 con ajuste fino, con cabeza `GlobalAveragePooling2D` + `Dense(1, relu)`.
-5. **Entrenamiento:** pérdida MSE, métrica MAE, Adam (0.001 congelada; 0.0001 ajuste fino), parada temprana con paciencia 3 sobre `val_mae`; en CPU local (Apple M5, 16 GB).
-6. **Evaluación:** MAE global y por grupo, sesgo, curva de umbral de 18 a 30 años e intervalos de confianza del 95% por *bootstrap* (1,000 remuestreos).
-
-## Reproducción
+### Reproducción
 
 ```bash
 conda env create -f environment.yml
@@ -118,4 +122,4 @@ conda activate good-seed-verificacion-edad
 
 *Proyecto desarrollado como parte del bootcamp de Data Science de TripleTen. Datos: Agustsson, E., Timofte, R., Escalera, S., Baró, X., Guyon, I. y Rothe, R. (2017). Apparent and real age estimation in still images with deep residual regressors on APPA-REAL database. FG 2017.*
 
-**Belem Cisneros Díaz** · [github.com/he1109-ci3l0](https://github.com/he1109-ci3l0)
+**Belem Cisneros Díaz** · [LinkedIn](https://www.linkedin.com/in/belemcisneros) · [github.com/he1109-ci3l0](https://github.com/he1109-ci3l0)
